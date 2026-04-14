@@ -11,6 +11,8 @@ import pg from "pg";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 import cors from "cors";
+import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -33,6 +35,24 @@ const pool = new pg.Pool({
 
 const app = new express();
 app.use(cors());
+app.use(express.json());
+
+app.post("/sign-up", async (req,res) => {
+  try {
+    const {email, password} = req.body
+
+    const hashedPassword = await bcrypt.hash(password,10)
+
+    await pool.query(
+      "INSERT INTO users (email,password) VALUES($1,$2)",[email,hashedPassword]
+    )
+
+    res.send({message: "Account Created Sucessfully"})
+
+  } catch (error) {
+    res.status(500).send("Account Creation Failed")
+  }
+})
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
