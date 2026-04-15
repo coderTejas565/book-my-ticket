@@ -97,6 +97,22 @@ app.post("/sign-in", async (req, res) => {
   }
 });
 
+// shows the users booking
+app.get("/my-bookings", authmiddleware, async (req, res) => {
+  try {
+    const userId = req.user.id;
+
+    const result = await pool.query(
+      "SELECT * FROM seats WHERE name = $1",
+      [userId]
+    );
+
+    res.status(200).send(result.rows);
+  } catch (err) {
+    res.status(500).send("Error fetching bookings");
+  }
+});
+
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
