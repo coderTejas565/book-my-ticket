@@ -175,15 +175,13 @@ The `FOR UPDATE` lock ensures that if two users attempt to book the same seat si
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/book-my-ticket.git
+git clone https://github.com/coderTejas565/book-my-ticket.git
 cd book-my-ticket
 
 # Install dependencies
 npm install
 
-# Configure environment
-cp .env.example .env
-# Edit .env with your values
+# Create a .env file and add the variables listed in the Environment Variables section
 
 # Start development server
 npm run dev
