@@ -13,6 +13,7 @@ import { fileURLToPath } from "url";
 import cors from "cors";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import dotenv from "dotenv";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -36,7 +37,13 @@ const pool = new pg.Pool({
 const app = new express();
 app.use(cors());
 app.use(express.json());
+dotenv.config()
 
+// auth middleware
+
+
+
+//sign-up user
 app.post("/sign-up", async (req,res) => {
   try {
     const {email, password} = req.body
@@ -54,7 +61,7 @@ app.post("/sign-up", async (req,res) => {
   }
 })
 
-
+// sign-in user
 app.post("/sign-in", async (req, res) => {
   try {
     const { email, password } = req.body
@@ -80,7 +87,7 @@ app.post("/sign-in", async (req, res) => {
     }
 
     const token = jwt.sign(
-      { id: user.id, email: user.email },
+      { id: user.id },
       process.env.JWT_SECRET,
       { expiresIn: "1d" }
     );
