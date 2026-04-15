@@ -54,6 +54,43 @@ app.post("/sign-up", async (req,res) => {
   }
 })
 
+
+app.post("/sign-in", async (req, res) => {
+  try {
+    const { email, password } = req.body
+    if (!email || !password) {
+    return res.status(400).json({ error: "All fields required" });
+    }
+
+    const result = await pool.query(
+      "SELECT * FROM users WHERE email=$1",
+      [email]
+    );
+
+    if (result.rowCount === 0) {
+      return res.status(401).send({ error: "Invalid credentials" });
+    }
+
+    const user = result.rows[0];
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).send({ error: "Invalid credentials" });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: "1d" }
+    );
+
+    res.status(200).send({ token });
+  } catch (err) {
+    res.status(500).send("Login error");
+  }
+});
+
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/index.html");
 });
